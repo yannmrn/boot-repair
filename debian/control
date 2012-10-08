@@ -10,8 +10,8 @@ Build-Depends:
 Standards-Version: 3.9.3
 X-Python-Version: all
 Homepage: https://launchpad.net/boot-repair
-Vcs-Git: git://anonscm.debian.org/collab-maint/boot-repair.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/boot-repair.git
+Vcs-Git: git://github.com/yannmrn/boot-repair.git
+Vcs-Browser: https://github.com/yannmrn/boot-repair
 
 Package: boot-repair
 Architecture: all
