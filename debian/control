@@ -16,6 +16,7 @@ Package: boot-repair
 Architecture: all
 Depends:
  boot-sav (>= 3.193),
+ python,
  ${misc:Depends},
  ${python:Depends}
 Recommends:
@@ -45,6 +46,7 @@ Depends:
  glade2script (>= 3.2) | glade2script-gtk2,
  os-prober,
  parted,
+ python,
  xdg-utils,
  zenity,
  ${misc:Depends},
@@ -73,6 +75,7 @@ Package: os-uninstaller
 Architecture: all
 Depends:
  boot-sav,
+ python,
  ${misc:Depends},
  ${python:Depends}
 Homepage: https://launchpad.net/os-uninstaller
