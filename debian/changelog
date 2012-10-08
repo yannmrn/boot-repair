@@ -1,4 +1,4 @@
-boot-repair (3.193.5-1) unstable; urgency=low
+boot-repair (3.193.5-2) unstable; urgency=low
 
   * Initial release (Closes: #636977)
 
