@@ -1,0 +1,127 @@
+Source: boot-repair
+Priority: optional
+Section: admin
+Maintainer: Yann Mrn <yannubuntu@gmail.com>
+Uploaders:
+ Alessio Treglia <alessio@debian.org>
+Build-Depends:
+ debhelper (>= 7),
+ python-all
+Standards-Version: 3.9.3
+X-Python-Version: all
+Homepage: https://launchpad.net/boot-repair
+Vcs-Git: git://anonscm.debian.org/collab-maint/boot-repair.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/boot-repair.git
+
+Package: boot-repair
+Architecture: all
+Depends:
+ boot-sav (>= 3.193),
+ ${misc:Depends},
+ ${python:Depends}
+Recommends:
+ gawk,
+ ntfsprogs | ntfs-3g (>=1:2011.4.12AR.4),
+ pastebinit,
+ xz-utils | xz-lzma | lzma
+Description: Graphical tool to repair boot problems
+ In some situation, you might loose access to one or several of
+ your operating systems, because of a buggy update, a bootloader
+ problem, a broken filesystem, or after installing a new OS (e.g.
+ installing Windows breaks Linux bootloader).
+ .
+ Boot-Repair is a graphical tool that will repair these problems,
+ generally by reinstalling GRUB, which then restores access to the
+ operating systems you had installed before the issue.
+ .
+ Boot-Repair also has advanced options for reinstalling GRUB, adding
+ kernel options, restoring a generic MBR, or repair a broken filesystem.
+ It can also restore the original bootsector if it has been saved
+ previously by Clean-Ubiquity.
+
+Package: boot-sav
+Architecture: all
+Depends:
+ gettext-base,
+ glade2script (>= 3.2) | glade2script-gtk2,
+ os-prober,
+ parted,
+ xdg-utils,
+ zenity,
+ ${misc:Depends},
+ ${python:Depends}
+Suggests:
+ dmraid,
+ lvm2,
+ mbr,
+ mdadm,
+ boot-repair,
+ clean-ubiquity,
+ os-uninstaller
+Recommends:
+ boot-sav-extra,
+ gksu,
+ lsb-release,
+ syslinux-common | syslinux,
+ zip
+Description: Librairies for Clean-Ubiquity, OS-uninstaller and Boot-repair
+ Common files for 3 tools related to boot:
+ Clean-Ubiquity,
+ OS-Uninstaller,
+ and Boot-Repair
+
+Package: boot-sav-extra
+Architecture: all
+Depends:
+ boot-sav,
+ ${misc:Depends}
+Description: Extra librairies for OS-uninstaller and Boot-repair
+ Common files for 2 tools related to boot:
+ OS-Uninstaller,
+ and Boot-Repair
+
+Package: os-uninstaller
+Architecture: all
+Depends:
+ boot-sav,
+ ${misc:Depends},
+ ${python:Depends}
+Homepage: https://launchpad.net/os-uninstaller
+Description: Operating System Uninstaller
+ When you have several operating systems (Windows, MacOS, GNU/Linux ..)
+ installed on your computer, you may want to remove one of them.
+ .
+ OS-Uninstaller is a graphical tool that will let you choose the system
+ you want to remove, and uninstall it very easily. After your
+ confirmation, it will format the selected system, and update the
+ bootloader so that you will still access your other remaining systems.
+ .
+ OS-Uninstaller also has advanced options for OS formatting, and
+ bootloader updating. It can also restore the original bootsector if it
+ has been saved previously by Clean-Ubiquity.
+
+Package: clean-ubiquity
+Architecture: all
+Depends:
+ boot-sav,
+ ${misc:Depends}
+Enhances:
+ ubiquity
+Homepage: https://launchpad.net/clean-ubiquity
+Description: Make the Ubiquity installer safer
+ Clean-Ubiquity is an addon for Ubiquity. It automatically performs
+ a backup of the bootsector that is altered by Ubiquity, and links it
+ with the UUID of the new OS.
+ .
+ This can be extremely useful if the computer is MBR-locked. MBR-lock is
+ a system that can be found on some OEM computers with pre-installed
+ Windows. It is (was?) put in place by some manufacturers in order to
+ fight against Windows piracy, by preventing or making difficult the use
+ of a Windows with a different version from the one that was originally
+ on the computer. MBR-lock is now forbidden in some countries (e.g.
+ France), so it should not be on recent computers. Basically, this
+ system uses data written on the motherboard and/or the MBR. If the MBR
+ has been altered (e.g. by GRUB), this system will detect it and prevent
+ Windows (or the entire computer) to boot.
+ .
+ Clean-Ubiquity needs 2 preseeds integrated during the ISO building.

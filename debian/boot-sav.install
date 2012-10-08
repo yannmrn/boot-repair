@@ -1,0 +1,6 @@
+usr/share/boot-sav/bs-*
+usr/share/boot-sav/gui-*
+usr/share/boot-sav/packconfig.png
+usr/share/boot-sav/removegrub.png
+usr/share/boot-sav/boot-sav.glade
+usr/share/locale/*
