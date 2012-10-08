@@ -1,0 +1,26 @@
+.TH BOOT-REPAIR 8 "January 2012"
+.SH NAME
+Boot-Repair \- Graphical tool to repair boot problems
+.SH SYNOPSIS
+.B boot-repair
+.SH DESCRIPTION
+In some situation, you might loose access to one or several of
+your operating systems, because of a buggy update, a bootloader
+problem, a broken filesystem, or after installing a new OS (e.g.
+installing Windows breaks Linux bootloader).
+.br
+Boot-Repair is a graphical tool that will repair these problems,
+generally by reinstalling GRUB, which then restores access to the
+operating systems you had installed before the issue.
+.br
+Boot-Repair also has advanced options for reinstalling GRUB, adding
+kernel options, restoring a generic MBR, or repair a broken filesystem.
+It can also restore the original bootsector if it has been saved
+previously by Clean-Ubiquity.
+.SH OPTIONS
+.TP
+No command line options.
+.SH AUTHORS
+Yann MRN <yannubuntu@gmail.com>
+.SH SEE ALSO
+.BR https://sourceforge.net/p/boot-repair

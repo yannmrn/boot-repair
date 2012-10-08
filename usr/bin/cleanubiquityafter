@@ -1,0 +1,102 @@
+#! /bin/bash
+# Copyright 2012 Yann MRN
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3, as published
+# by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranties of
+# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
+# PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
+
+######################################## Check where the new Linux has been installed. ###################################
+# inputs : none
+# outputs : $NEW_LINUX_PARTITION
+determine_new_linux_partition() {
+echo "Check where the new Linux has been installed."
+DF=$(df /target | grep "/dev/" ); DF=${DF%% *}		#e.g. "/dev/sda3"
+NEW_LINUX_PARTITION=${DF#*v/}				#e.g. "sda3" or "sda10"
+NEW_LINUX_DISK=${NEW_LINUX_PARTITION/%[0-9]*}		#e.g. "sda"
+UUID_OF_NEW_LINUX_PART="$(blkid -s UUID -o value /dev/$NEW_LINUX_PARTITION)"
+echo "The new Linux has been installed on $NEW_LINUX_PARTITION ($NEW_LINUX_DISK). UUID is $UUID_OF_NEW_LINUX_PART"
+}
+
+######################################### ADD NEW LINUX TO OSPROBER ######################################################
+# output : OSPROBER
+add_new_linux_to_osprober() {
+OSPROBER=$(os-prober); ADDED_NEW_LINUX_TO_OSPROBER="no"
+echo "$OSPROBER" >$TMP_FOLDER_TO_BE_CLEARED/osprober
+while read line; do
+  if [[ "$line" =~ "/dev/${NEW_LINUX_DISK}" ]] && [[ "$ADDED_NEW_LINUX_TO_OSPROBER" = "no" ]];then
+    ADDED_NEW_LINUX_TO_OSPROBER="yes"
+    echo "/dev/${NEW_LINUX_PARTITION}:NewLinux NewLinux NewLinux:linux" >> $TMP_FOLDER_TO_BE_CLEARED/osprober_with_newlinuxpart
+  fi	#To put it with same disk OSs (DISK[$QUANTITY_OF_DISKS])
+  if [[ ! "$line" =~ "/dev/${NEW_LINUX_PARTITION}:" ]];then
+    echo "$line" >> $TMP_FOLDER_TO_BE_CLEARED/osprober_with_newlinuxpart
+  fi
+done < <(echo "$(< $TMP_FOLDER_TO_BE_CLEARED/osprober)")
+if [[ "$ADDED_NEW_LINUX_TO_OSPROBER" = "no" ]];then
+  echo "/dev/${NEW_LINUX_PARTITION}:NewLinux NewLinux NewLinux:linux" >> $TMP_FOLDER_TO_BE_CLEARED/osprober_with_newlinuxpart
+fi
+OSPROBER=$(< $TMP_FOLDER_TO_BE_CLEARED/osprober_with_newlinuxpart) ; echo "Put os-prober in memory"
+}
+
+
+########################################### MAIN FUNCTION #################################################################
+# inputs : $language , $APPNAME
+# outputs : none
+main_function() {
+determine_new_linux_partition	#Output: $NEW_LINUX_PARTITION, NEW_LINUX_DISK and UUID_OF_NEW_LINUX_PART
+add_new_linux_to_osprober	#Output: $OSPROBER
+blkid -g			#Update the UUID cache
+BLKID=$(blkid)			#The new_linux is in /target
+check_os_and_mount_blkid_partitions
+echo "Check which MBR have been changed, and update the backups in tmp"
+for ((i=1;i<=NBOFPARTITIONS;i++)); do # First backup system, in all OSs of all disks, but does not work if no UUID
+  if [[ "${PART_UUID[$i]}" ]];then
+    if [[ -f ${LOG_PATH_LINUX}/clean-ubiquity/${PART_UUID[$i]}.img ]];then
+      check_if_tmp_mbr_is_grub_type ${LOG_PATH_LINUX}/clean-ubiquity/${PART_UUID[$i]}.img
+      if [[ "$MBRCONTAINSGRUB" = "false" ]];then
+        echo "${PART_UUID[$i]}.img does not contain GRUB, we will backup it if necessary."
+        check_if_tmp_mbr_is_grub_type $LOGREP/${DISK_PART[$i]}/current_mbr.img
+        if [[ "$MBRCONTAINSGRUB" = "true" ]];then
+          mkdir -p $LOGREP/UUID/${PART_UUID[$i]}/
+          cp -r ${LOG_PATH_LINUX}/clean-ubiquity/${PART_UUID[$i]}.img $LOGREP/UUID/${PART_UUID[$i]}/mbr-${DATE}-UUID${UUID_OF_NEW_LINUX_PART}.img
+          echo "The MBR of ${DISK_PART[$i]} has been modified by Ubiquity, we saved it. (v3)"
+        fi
+      fi
+    fi
+  else #Second backup system, independant of UUID, but only in all OSs of the disk (Clean-Ubiquity v1)
+    check_if_tmp_mbr_is_grub_type ${LOG_PATH_LINUX}/clean-ubiquity/${DISK_PART[$i]}_mbr_before_ubiquity.img
+    if [[ "$MBRCONTAINSGRUB" = "false" ]];then
+      echo "${DISK_PART[$i]}_mbr_before_ubiquity.img does not contain GRUB, so we will backup it if necessary."
+      check_if_tmp_mbr_is_grub_type $LOGREP/${DISK_PART[$i]}/current_mbr.img
+      if [[ "$MBRCONTAINSGRUB" = "true" ]];then
+        cp -r ${LOG_PATH_LINUX}/clean-ubiquity/${DISK_PART[$i]}_mbr_before_ubiquity.img $LOGREP/${DISK_PART[$i]}/mbr-${DATE}-UUID${UUID_OF_NEW_LINUX_PART}.img
+        echo "The MBR of ${DISK_PART[$i]} has been modified by Ubiquity, we saved it. (v1)"
+      fi
+    fi
+  fi
+done
+mkdir -p $LOGREP/before_ubiquity; cp -r ${LOG_PATH_LINUX}/clean-ubiquity/* $LOGREP/before_ubiquity/ #Security
+duplicate_backup_from_tmp_to_os_without_backup #Also duplicates into /target as it has been added in OSPROBER
+save_log_on_disks
+unmount_all_blkid_partitions_except_df #Does not unmount /target
+rm -r $TMP_FOLDER_TO_BE_CLEARED
+rm -r ${LOG_PATH_LINUX}/clean-ubiquity
+echo "End of main_function"
+}
+
+
+APPNAME=${0##*/}
+PACK_NAME=boot-sav
+. /usr/share/${PACK_NAME}/bs-init.sh  #Librairies common to os-uninstaller, boot-repair, and clean-ubiquity
+. /usr/share/${PACK_NAME}/bs-common.sh  #Librairies common to os-uninstaller, boot-repair, and clean-ubiquity
+initialization; log_preparation
+main_function
+echo "End of script."
+exit 0

@@ -1,0 +1,51 @@
+#! /bin/bash
+# Copyright 2012 Yann MRN
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3, as published
+# by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranties of
+# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
+# PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
+
+main_function() {
+log_preparation
+rm -rf ${LOG_PATH_LINUX}/clean-ubiquity
+mkdir ${LOG_PATH_LINUX}/clean-ubiquity
+delete_tmp_folder_to_be_cleared_and_update_osprober
+check_os_and_mount_blkid_partitions
+check_disks_containing_mbr_backups
+duplicate_backup_from_tmp_to_os_without_backup
+for ((i=1;i<=NBOFPARTITIONS;i++)); do             # To detect where GRUB has been installed after ubiquity (v3)
+  if [[ "${PART_UUID[$i]}" ]];
+    then cp $LOGREP/${DISK_PART[$i]}/current_mbr.img ${LOG_PATH_LINUX}/clean-ubiquity/${PART_UUID[$i]}.img
+    else cp $LOGREP/${DISK_PART[$i]}/current_mbr.img ${LOG_PATH_LINUX}/clean-ubiquity/${DISK_PART[$i]}_mbr_before_ubiquity.img
+  fi
+done
+save_log_on_disks
+unmount_all_blkid_partitions_except_df
+echo "End of main_function."
+}
+
+
+# BEGINNING OF SCRIPT
+APPNAME=${0##*/}
+PACK_NAME=boot-sav
+. /usr/share/${PACK_NAME}/bs-init.sh  #Librairies common to os-uninstaller, boot-repair, and clean-ubiquity
+. /usr/share/${PACK_NAME}/bs-common.sh  #Librairies common to os-uninstaller, boot-repair, and clean-ubiquity
+initialization
+HOUR=$(date +'%Y-%m-%d__%Hh')
+MIN1=$(date +'%M')
+MIN2=$((${MIN1}-1))
+FLD=/var/log/${PACK_NAME}
+mkdir -p $FLD
+if [[ ! "$(dir $FLD)" =~ "${HOUR}${MIN1}${APPNAME}" ]] && [[ ! "$(dir $FLD)" =~ "${HOUR}${MIN2}${APPNAME}" ]]; then	# To avoid double launch
+	main_function	# MBR backup should be invisible for the user
+fi
+echo "End of script."
+exit 0

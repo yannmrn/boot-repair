@@ -1,0 +1,33 @@
+.TH CLEANUBIQUITYBEFORE 8 "January 2012"
+.SH NAME
+cleanubiquitybefore \- First executable of Clean-Ubiquity
+.SH SYNOPSIS
+.B cleanubiquitybefore
+.SH DESCRIPTION
+Clean-Ubiquity is an addon for Ubiquity. It automatically performs
+a backup of the bootsector that is altered by Ubiquity, and links it
+with the UUID of the new OS.
+.br
+This can be extremely useful if the computer is MBR-locked. MBR-lock is
+a system that can be found on some OEM computers with pre-installed
+Windows. It is (was?) put in place by some manufacturers in order to
+fight against Windows piracy, by preventing or making difficult the use
+of a Windows with a different version from the one that was originally
+on the computer. MBR-lock is now forbidden in some countries (e.g.
+France), so it should not be on recent computers. Basically, this
+system uses data written on the motherboard and/or the MBR. If the MBR
+has been altered (e.g. by GRUB), this system will detect it and prevent
+Windows (or the entire computer) to boot.
+.br
+Clean-Ubiquity needs 2 preseeds integrated during the ISO building.
+.br
+cleanubiquitybefore is the first executable of Clean-Ubiquity.
+It is called by a preseed before the installer is launched.
+It automatically backups the bootsectors of all disks.
+.SH OPTIONS
+.TP
+No command line options.
+.SH AUTHORS
+Yann MRN <yannubuntu@gmail.com>
+.SH SEE ALSO
+.BR https://launchpad.net/clean-ubiquity
