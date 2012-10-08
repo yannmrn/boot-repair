@@ -70,16 +70,6 @@ Description: Librairies for Clean-Ubiquity, OS-uninstaller and Boot-repair
  OS-Uninstaller,
  and Boot-Repair
 
-Package: boot-sav-extra
-Architecture: all
-Depends:
- boot-sav,
- ${misc:Depends}
-Description: Extra librairies for OS-uninstaller and Boot-repair
- Common files for 2 tools related to boot:
- OS-Uninstaller,
- and Boot-Repair
-
 Package: os-uninstaller
 Architecture: all
 Depends:
