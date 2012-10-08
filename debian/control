@@ -2,8 +2,7 @@ Source: boot-repair
 Priority: optional
 Section: admin
 Maintainer: Yann Mrn <yannubuntu@gmail.com>
-Uploaders:
- Alessio Treglia <alessio@debian.org>
+Uploaders: Alessio Treglia <alessio@debian.org>
 Build-Depends:
  debhelper (>= 7),
  python-all
