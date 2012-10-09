@@ -5,3 +5,4 @@ usr/share/applications/boot-repair.desktop
 usr/share/boot-sav/bis*
 usr/share/boot-sav/boot-repair*
 usr/share/icons/hicolor/128x128/apps/boot-repair.png
+usr/share/doc/boot-repair/changelog.gz

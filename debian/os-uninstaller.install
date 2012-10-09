@@ -4,3 +4,4 @@ usr/bin/os-uninstaller
 usr/share/applications/os-uninstaller.desktop
 usr/share/boot-sav/os-uninstaller*
 usr/share/icons/hicolor/128x128/apps/os-uninstaller.png
+usr/share/doc/os-uninstaller/changelog.gz
