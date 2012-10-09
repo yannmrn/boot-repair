@@ -107,7 +107,7 @@ Description: Make the Ubiquity installer safer
  on the computer. MBR-lock is now forbidden in some countries (e.g.
  France), so it should not be on recent computers. Basically, this
  system uses data written on the motherboard and/or the MBR. If the MBR
- has been altered (e.g. by GRUB), this system will detect it and prevent
+ has been altered (eg. by GRUB), this system will detect it and prevent
  Windows (or the entire computer) to boot.
  .
  Clean-Ubiquity needs 2 preseeds integrated during the ISO building.
