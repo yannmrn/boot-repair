@@ -303,6 +303,7 @@ elif [[ "$MBR_ACTION" = reinstall ]] && [[ "$GRUBPACKAGE" != grub-efi ]] \
 	ATEXT="$FUNCTION_detected $Please_create_TYP_part (>1MB, ${No_filesystem}, ${FLAGTYP_flag}). $Via_TOOL1 $Then_try_again"
 	[[ "$NB_BISEFIPART" != 0 ]] && ATEXT="$ATEXT
 $Alternatively_you_can_try_OPTION1"
+	echo "(debug) $MBR_ACTION $GRUBPACKAGE $FORCE_GRUB ${BIOS_BOOT[${DISKNB_PART[$REGRUB_PART]}]} (${LISTOFPARTITIONS[$REGRUB_PART]})"
 fi
 
 #FYI

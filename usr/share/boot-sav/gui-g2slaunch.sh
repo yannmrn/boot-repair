@@ -76,10 +76,10 @@ if [[ "$G2S" ]];then  # -d for debug
 	--combobox="@@_combobox_partition_booted_bymbr@@col"
 fi
 
-if [[ -f /usr/share/boot-sav-extra/gui-update.sh ]];then #not in Debian packaging
-	. /usr/share/boot-sav-extra/gui-update.sh
-	restart_if_necessary
-fi
+#if [[ -f /usr/share/boot-sav-extra/gui-update.sh ]];then #not in Debian packaging
+#	. /usr/share/boot-sav-extra/gui-update.sh
+#	restart_if_necessary
+#fi
 }
 
 determine_g2s() {

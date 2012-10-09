@@ -23,12 +23,12 @@ echo_g2sversion
 WGETTIM=10
 slist="/etc/apt/sources.list"
 first_translations
-check_internet_connection
-if [[ -f /usr/share/boot-sav-extra/gui-update.sh ]];then #not in Debian packaging
-	. /usr/share/boot-sav-extra/gui-update.sh
-	check_app_updates
-fi
-if [[ "$choice" != exit ]];then
+#check_internet_connection
+#if [[ -f /usr/share/boot-sav-extra/gui-update.sh ]];then #not in Debian packaging
+#	. /usr/share/boot-sav-extra/gui-update.sh
+#	check_app_updates
+#fi
+#if [[ "$choice" != exit ]];then
 	activate_lvm_if_needed
 	[[ "$choice" != exit ]] && activate_raid_if_needed
 	if [[ "$choice" = exit ]];then
@@ -39,7 +39,7 @@ if [[ "$choice" != exit ]];then
 		LAB="$Scanning_systems"
 		echo "SET@_label0.set_text('''${LAB}. $This_may_require_several_minutes''')"
 	fi
-fi
+#fi
 }
 
 ######################### CHECK INTERNET CONNECTION ####################
