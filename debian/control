@@ -16,9 +16,7 @@ Package: boot-repair
 Architecture: all
 Depends:
  boot-sav (>= 3.193),
- python,
- ${misc:Depends},
- ${python:Depends}
+ ${misc:Depends}
 Recommends:
  gawk,
  ntfsprogs | ntfs-3g (>=1:2011.4.12AR.4),
@@ -46,11 +44,9 @@ Depends:
  glade2script (>= 3.2) | glade2script-gtk2,
  os-prober,
  parted,
- python,
  xdg-utils,
  zenity,
- ${misc:Depends},
- ${python:Depends}
+ ${misc:Depends}
 Suggests:
  dmraid,
  lvm2,
@@ -75,9 +71,7 @@ Package: os-uninstaller
 Architecture: all
 Depends:
  boot-sav,
- python,
- ${misc:Depends},
- ${python:Depends}
+ ${misc:Depends}
 Homepage: https://launchpad.net/os-uninstaller
 Description: Operating System Uninstaller
  When you have several operating systems (Windows, MacOS, GNU/Linux ..)
