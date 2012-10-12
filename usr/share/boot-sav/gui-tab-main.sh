@@ -152,8 +152,7 @@ else
 	RESTORE_BKP_ACTION=""
 	echo 'SET@_checkbutton_restore_bkp.set_active(False)'
 fi
-if [[ "$MBR_ACTION" = reinstall ]] && [[ "$GRUBPACKAGE" = grub-efi ]] && [[ "$WINEFIFILEPRESENCE" ]] \
-&& [[ ! "$RESTORE_BKP_ACTION" ]];then
+if [[ "$MBR_ACTION" = reinstall ]] && [[ "$GRUBPACKAGE" = grub-efi ]] && [[ ! "$RESTORE_BKP_ACTION" ]];then #&& [[ "$WINEFIFILEPRESENCE" ]]
 	echo 'SET@_checkbutton_create_bkp.show()'
 	CREATE_BKP_ACTION=backup-and-rename-efi-files
 	echo 'SET@_checkbutton_create_bkp.set_active(True)'

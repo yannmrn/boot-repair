@@ -21,17 +21,7 @@ PURGEDONE=""
 SOURCERROR=""
 echo "Purge the GRUB of ${LISTOFPARTITIONS[$REGRUB_PART]}"
 update_cattee
-if [[ "$LASTGRUB_ACTION" ]];then
-	TMPDEP="${BLKIDMNT_POINT[$REGRUB_PART]}"
-	CHECKRECUB="$(cat ${TMPDEP}$slist | grep " $RECENTUB " | grep main | grep -v "#deb" | grep -v "# deb" | grep -v extra )"
-	if [[ ! "$CHECKRECUB" ]] && [[ "$DISABLE_TEMPORARY_CHANGE_THE_SOURCESLIST_OF_A_BROKEN_OS" != yes ]] \
-	&& [[ -f "${TMPDEP}$slist" ]];then
-		echo "Install last GRUB version in ${TMPDEP}$slist"
-		echo "deb http://archive.ubuntu.com/ubuntu/ $RECENTUB main" >> ${TMPDEP}$slist
-		cp ${TMPDEP}$slist $LOGREP/sources.list_after_grubpurge #debug
-		aptget_update_function
-	fi
-fi
+grub_purge_extra
 echo "SET@_label0.set_text('''$Purge_and_reinstall_the_grub_of ${LISTOFPARTITIONS[$REGRUB_PART]}. ${This_may_require_several_minutes}''')"
 echo "SET@_purgewindow.set_title('''$APPNAME2''')"
 echo "SET@_purgewindow.set_icon_from_file('''$APPNAME.png''')"

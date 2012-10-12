@@ -64,15 +64,13 @@ GRUBPURGE_ACTION=""
 echo 'SET@_button_open_etc_default_grub.show()'
 }
 
-
 _checkbutton_lastgrub() {
-if [[ "${@}" = True ]] && [[ "$DISABLE_TEMPORARY_CHANGE_THE_SOURCESLIST_OF_A_BROKEN_OS" != yes ]];then
-	zenity --warning --title="$APPNAME2" --text="${Warning_lastgrub} ${Please_backup_data}"
-	set_checkbutton_lastgrub
+if [[ "${@}" = True ]];then
+	lastgrub_extra
 else
 	unset_checkbutton_lastgrub
 fi
-echo "[debug]LASTGRUB_ACTION becomes : $LASTGRUB_ACTION"
+echo "[debug]LASTGRUB_ACTION becomes: $LASTGRUB_ACTION"
 }
 
 set_checkbutton_lastgrub() {
@@ -87,28 +85,8 @@ LASTGRUB_ACTION=""
 activate_grubpurge_if_necessary
 }
 
-activate_hide_lastgrub_if_necessary() {
-if [[ "${APTTYP[$USRPART]}" = apt-get ]];then
-	echo 'SET@_checkbutton_lastgrub.show()'
-	if [[ "$(cat ${BLKIDMNT_POINT[$REGRUB_PART]}/etc/apt/sources.list | grep quantal )" ]] \
-	|| [[ "$GRUBPACKAGE" = grub ]];then
-		unset_checkbutton_lastgrub; echo 'SET@_checkbutton_lastgrub.set_active(False)'
-		echo 'SET@_checkbutton_lastgrub.set_sensitive(False)'
-	elif [[ "$GRUBPACKAGE" = grub-efi ]];then
-		set_checkbutton_lastgrub; echo 'SET@_checkbutton_lastgrub.set_active(True)'
-		echo 'SET@_checkbutton_lastgrub.set_sensitive(False)'
-	else
-		unset_checkbutton_lastgrub;	echo 'SET@_checkbutton_lastgrub.set_active(False)'
-		echo 'SET@_checkbutton_lastgrub.set_sensitive(True)'
-	fi
-else
-	unset_checkbutton_lastgrub;	echo 'SET@_checkbutton_lastgrub.hide()'
-fi
-echo "[debug]LASTGRUB_ACTION becomes: $LASTGRUB_ACTION"
-}
-
 _checkbutton_legacy() {
-if [[ "${@}" = True ]] && [[ "$DISABLE_TEMPORARY_CHANGE_THE_SOURCESLIST_OF_A_BROKEN_OS" != yes ]];then
+if [[ "${@}" = True ]];then
 	zenity --warning --title="$APPNAME2" --text="$This_will_install_an_obsolete_bootloader (GRUB Legacy). ${Please_backup_data}"
 	GRUBPACKAGE=grub
 	echo 'SET@_hbox_efi.set_sensitive(False)'

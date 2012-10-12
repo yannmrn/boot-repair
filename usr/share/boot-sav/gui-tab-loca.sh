@@ -276,7 +276,7 @@ done)
 echo 'SET@_combobox_efi.set_active(0)'; EFIPART_TO_USE="${LIST_EFIPART[1]}"
 echo 'SET@_combobox_efi.set_sensitive(True)' #solves glade3 bug
 NOTEFIREASON=""
-echo "EFIFILEPRESENCE $EFIFILEPRESENCE, QTY_SUREEFIPART $QTY_SUREEFIPART"
+echo "[debug]EFIFILEPRESENCE $EFIFILEPRESENCE, QTY_SUREEFIPART $QTY_SUREEFIPART"
 if [[ ! "$EFIDMESG" =~ maybe ]] || [[ "${BIOS_BOOT[${DISKNB_PART[$EFIPART_TO_USE]}]}" != BIOS_boot ]] \
 && [[ "$MAYBEUEFIMODE" ]] && [[ "$QUANTITY_OF_REAL_WINDOWS" = 0 ]] \
 || [[ "$EFIFILEPRESENCE" ]] && [[ "$QTY_SUREEFIPART" != 0 ]];then
@@ -349,7 +349,7 @@ if [[ "$QTY_OF_PART_WITH_GRUB" != 0 ]] || [[ "$QTY_OF_PART_WITH_APTGET" != 0 ]];
 	if [[ "$QTY_OF_PART_FOR_REINSTAL" != 0 ]];then
 		if [[ "$QUANTITY_OF_DETECTED_WINDOWS" != 0 ]] && [[ ! "$(grep -i windows <<< "$OS_TO_DELETE_NAME" )" ]];then
 			for ((cotbdf=1;cotbdf<=NBOFPARTITIONS;cotbdf++)); do
-				if [[ "$(echo "${OSNAME[$cotbdf]}" | grep -i windows )" ]];then
+				if [[ "$(grep -i windows <<< "${OSNAME[$cotbdf]}" )" ]];then
 					(( QTY_OF_PART_FOR_REINSTAL += 1 ))
 					LIST_OF_PART_FOR_REINSTAL[$QTY_OF_PART_FOR_REINSTAL]="$cotbdf"
 					LABEL_PART_FOR_REINSTAL[$QTY_OF_PART_FOR_REINSTAL]="Windows \(via ${LISTOFPARTITIONS[${LIST_OF_PART_FOR_REINSTAL[1]}]} menu\)"
@@ -482,7 +482,7 @@ if [[ "$NBOFDISKS" != 1 ]] && [[ "$GRUBPACKAGE" != grub-efi ]] \
 		if [[ "${OS_DISK[$cpgarf]}" != "${DISKA}" ]];then
 			echo "[debug]It exists another disk with OS"
 			echo 'SET@_vbox_is_removable_disk.show()'
-			a="$(echo "$PARTEDL" | grep "/dev/${DISKA}:" )"; a="${a##* }"
+			a="$(grep "/dev/${DISKA}:" <<< "$PARTEDL" )"; a="${a##* }"
 			[[ "$a" ]] && DISK1="$DISKA (${a})" || DISK1="$DISKA"
 			update_translations
 			echo "SET@_label_is_removable_disk.set_text('''${DISK1} ${is_a_removable_disk}''')"

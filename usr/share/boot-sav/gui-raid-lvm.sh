@@ -23,23 +23,16 @@ echo_g2sversion
 WGETTIM=10
 slist="/etc/apt/sources.list"
 first_translations
-#check_internet_connection
-#if [[ -f /usr/share/boot-sav-extra/gui-update.sh ]];then #not in Debian packaging
-#	. /usr/share/boot-sav-extra/gui-update.sh
-#	check_app_updates
-#fi
-#if [[ "$choice" != exit ]];then
-	activate_lvm_if_needed
-	[[ "$choice" != exit ]] && activate_raid_if_needed
-	if [[ "$choice" = exit ]];then
-		end_pulse
-		zenity --info --title="$APPNAME2" --text="$No_change_on_your_pc_See_you"
-		echo 'EXIT@@'
-	else
-		LAB="$Scanning_systems"
-		echo "SET@_label0.set_text('''${LAB}. $This_may_require_several_minutes''')"
-	fi
-#fi
+activate_lvm_if_needed
+[[ "$choice" != exit ]] && activate_raid_if_needed
+if [[ "$choice" = exit ]];then
+	end_pulse
+	zenity --info --title="$APPNAME2" --text="$No_change_on_your_pc_See_you"
+	echo 'EXIT@@'
+else
+	LAB="$Scanning_systems"
+	echo "SET@_label0.set_text('''${LAB}. $This_may_require_several_minutes''')"
+fi
 }
 
 ######################### CHECK INTERNET CONNECTION ####################
@@ -207,4 +200,3 @@ if [[ "$(type -p dmraid)" ]];then	#http://ubuntuforums.org/showthread.php?t=1551
 	fi
 fi
 }
-

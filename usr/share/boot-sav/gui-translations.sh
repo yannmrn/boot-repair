@@ -75,11 +75,6 @@ is_a_removable_disk=$(eval_gettext $'is a removable disk.')
 Place_GRUB_into=$(eval_gettext $'Place GRUB into:')
 Force_GRUB_into=$(eval_gettext $'Force GRUB into:')
 for_chainloader=$(eval_gettext $'for chainloader')
-Use_last_grub=$(eval_gettext $'Upgrade GRUB to its most recent version')
-RECENTREP=Ubuntu-12.10-beta
-RECENTUB=quantal
-#/// Please do not translate ${RECENTREP}
-Warning_lastgrub=$(eval_gettext $'Warning: this will install necessary packages from ${RECENTREP} repositories.')
 Blank_extra_space=$(eval_gettext $'Reset extra space after MBR')
 Warning_blankextra=$(eval_gettext $'Warning: some applications using DRM or some OEM system tools may not work afterwards.')
 #/// Please do not translate GRUB_GFXMODE
@@ -141,7 +136,10 @@ You_may_also_want_to_install_PROGRAM6=$(eval_gettext $'You may also want to inst
 BootPartitionDoc=$(eval_gettext $'https://help.ubuntu.com/community/BootPartition')
 Backup_and_rename_efi_files=$(eval_gettext $'Backup and rename EFI files')
 Restore_EFI_backups=$(eval_gettext $'Restore EFI backups')
+Broken_wubi_detected=$(eval_gettext $'A broken Wubi has been detected. Please fix it this way:')
+Missingrootdiskurl=$(eval_gettext $'https://wiki.ubuntu.com/WubiGuide#Cannot_boot_into_Ubuntu')
 
+first_translations_extra
 first_translations_diff
 update_translations
 }

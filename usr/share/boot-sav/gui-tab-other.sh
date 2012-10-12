@@ -46,7 +46,6 @@ echo "SET@_label_place_grub.set_text('''${Place_GRUB_into}''')"
 combobox_ostoboot_bydefault_fillin
 echo "SET@_label_lastgrub.set_text('''${Use_last_grub}''')"
 echo "SET@_label_legacy.set_text('''GRUB Legacy''')"
-[[ "$DISABLE_TEMPORARY_CHANGE_THE_SOURCESLIST_OF_A_BROKEN_OS" != no ]] && echo "SET@_checkbutton_lastgrub.hide()"
 BUG=FlexNet; update_translations
 echo "SET@_label_blankextraspace.set_text('''${Blank_extra_space} (${solves_BUG})''')"
 BUG="no-signal / out-of-range"; update_translations
@@ -72,7 +71,6 @@ echo "SET@_label_pleasechoosebackuprep.set_text('''${Please_choose_folder_to_put
 echo "SET@_label_backup_table.set_text('''${Backup_table}''')"
 SYSTEM1=Windows; update_translations
 echo "SET@_label_winboot.set_text('''${Repair_SYSTEM1_bootfiles}''')"
-echo "SET@_label_bsd.set_text('''(beta)''')"
 echo "SET@_label_stats.set_text('''${Participate_stats}''')"
 echo "SET@_label_internet.set_text('''${Check_internet}''')"
 }
@@ -124,8 +122,8 @@ for ((disk=1;disk<=NBOFDISKS;disk++));do
 		QTY_TARGETMBRPART="$QTY_PRIMPART"
 		for ((fbfc=1;fbfc<=QTY_PRIMPART;fbfc++)); do
 			(( QTY_FLAGPART += 1 ))
-			FLAGPART[$QTY_FLAGPART]="${PRIMPART[$fbfc]}"			#e.g. ${LISTOFPARTITIONS[FLAGPART[a]]}= sda3
-			FLAGPARTNAME[$QTY_FLAGPART]="${PRIMPARTNAME[$fbfc]}"	#e.g. sda3 (XP)
+			FLAGPART[$QTY_FLAGPART]="${PRIMPART[$fbfc]}"			#eg ${LISTOFPARTITIONS[FLAGPART[a]]}= sda3
+			FLAGPARTNAME[$QTY_FLAGPART]="${PRIMPARTNAME[$fbfc]}"	#eg sda3 (XP)
 		done
 	fi
 done
@@ -186,54 +184,6 @@ _checkbutton_winboot() {
 echo "[debug]WINBOOT_ACTION becomes: $WINBOOT_ACTION"
 }
 
-_checkbutton_bsd() {
-[[ "${@}" = True ]] && WINBSD_ACTION=yes || WINBSD_ACTION=""
-echo "[debug]WINBSD_ACTION becomes: $WINBSD_ACTION"
-}
-
-################## Repair repositories
-repair_dep() {
-local PARTI="$1" line TEMPUV tempuniv RECENTUB=quantal CHECKRECUB
-TMPDEP=""
-if [[ "$PARTI" ]];then TMPDEP="${BLKIDMNT_POINT[$PARTI]}";fi #cant minimize
-if [[ "$DISABLE_TEMPORARY_CHANGE_THE_SOURCESLIST_OF_A_BROKEN_OS" != yes ]] && [[ -f "${TMPDEP}/usr/bin/apt-get" ]];then
-	echo "[debug]Repair repositories in ${TMPDEP}$slist"
-	if [[ -f "${TMPDEP}$slist" ]];then
-		if [[ ! -f "${LOGREP}/sources.list$PARTI" ]];then
-			mv ${TMPDEP}$slist $LOGREP/sources.list$PARTI #will be restored later
-			if [[ -f "$LOGREP/sources.list$PARTI" ]];then #security
-				while read line; do
-					if [[ "$(echo "$line" | grep cdrom | grep -v '#' )" ]];then
-						echo "# ${line}" >> ${TMPDEP}$slist #avoids useless warnings
-					else
-						echo "$line" >> ${TMPDEP}$slist
-					fi
-				done < <(echo "$(< $LOGREP/sources.list$PARTI )" )
-				if [[ ! "$TMPDEP" ]] && [[ "$(lsb_release -is)" = Ubuntu ]] && [[ "$PACKAGELIST" =~ pastebin ]];then #For pastebinit
-					UV=$(lsb_release -cs)
-					for TEMPUV in lucid natty oneiric precise;do #Pastebinit is in Main since Quantal
-						tempuniv="deb http://archive.ubuntu.com/ubuntu/ $UV universe"
-						[[ ! "$(cat $slist | grep universe | grep -v '#' )" ]] \
-						&& [[ "$UV" = "$TEMPUV" ]] && echo "$tempuniv" >> $slist
-					done
-				fi
-			fi
-		fi
-	fi
-fi
-}
-
-restore_dep() {
-local PARTI="$1"
-TMPDEP=""
-if [[ "$PARTI" ]];then TMPDEP="${BLKIDMNT_POINT[$PARTI]}";fi #cant minimize
-if [[ "$DISABLE_TEMPORARY_CHANGE_THE_SOURCESLIST_OF_A_BROKEN_OS" != yes ]] && [[ -f "${TMPDEP}/usr/bin/apt-get" ]];then
-	#[[ ! -f "$LOGREP/sources_$PARTI" ]] && cp "$LOGREP/sources.list" "$PARTI $LOGREP/sources_$PARTI"
-	[[ ! -f "$LOGREP/sources.list$PARTI" ]] && echo "Error: no $LOGREP/sources.list$PARTI" \
-	|| mv "$LOGREP/sources.list$PARTI" "${TMPDEP}/etc/apt/sources.list"
-fi
-}
-
 ########################### Install necessary packages for repair (lvm, raid..) after user confirmation
 installpackagelist() {
 local temp=ok temp2=ok NEEDEDREP=Misc
@@ -257,11 +207,7 @@ if [[ "$MISSINGPACKAGE" ]];then
 			temp="$($UPDCOM)"; temp2="$($INSCOM)"
 		fi
 		check_missing_packages
-		if [[ "$INTERNET" = connected ]] && [[ "$MISSINGPACKAGE" ]];then
-			repair_dep
-			temp="$($UPDCOM)"; temp2="$($INSCOM)"; restore_dep
-		fi
-		check_missing_packages
+		installpackagelist_extra
 		if [[ "$MISSINGPACKAGE" ]];then
 			echo "Could not install $PACKAGELIST"
 			end_pulse
@@ -288,11 +234,7 @@ fi
 check_missing_packages() {
 local test
 MISSINGPACKAGE=""
-if [[ "$FILETOTEST" = extra ]];then
-	[[ ! -d /usr/share/boot-sav/extra ]] && MISSINGPACKAGE=yes
-else
-	for test in $FILETOTEST;do
-		[[ ! "$(type -p $test)" ]] && MISSINGPACKAGE=yes
-	done
-fi
+for test in $FILETOTEST;do
+	[[ ! "$(type -p $test)" ]] && MISSINGPACKAGE=yes
+done
 }
