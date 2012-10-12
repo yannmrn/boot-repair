@@ -30,7 +30,7 @@ echo_g2sversion() {
 determine_g2s
 G2S_VERSION=$($PACKVERSION $G2S )
 echo "$G2S version : $G2S_VERSION"
-echo "boot-sav-nonfree version : $($PACKVERSION boot-sav-nonfree )"
+echo "boot-sav-extra version : $($PACKVERSION boot-sav-extra )"
 }
 
 g2slaunch() {
@@ -53,12 +53,6 @@ if [[ $EUID -ne 0 ]];then
 	exit
 fi
 
-#avoid dpkg block when upgrading from versions <=3.0
-#if [[ ! -x /usr/bin/glade2script ]] && [[ ! -x /usr/bin/glade2script-gtk2 ]] || [[ ! -f packconfig.png ]];then
-#	. /usr/share/boot-sav-extra/gui-update.sh
-#	unblock_dpkg
-#fi
-
 # Launch the Glade window via glade2script
 determine_g2s
 if [[ "$G2S" ]];then  # -d for debug
@@ -75,11 +69,6 @@ if [[ "$G2S" ]];then  # -d for debug
 	--combobox="@@_combobox_restore_mbrof@@col" \
 	--combobox="@@_combobox_partition_booted_bymbr@@col"
 fi
-
-#if [[ -f /usr/share/boot-sav-extra/gui-update.sh ]];then #not in Debian packaging
-#	. /usr/share/boot-sav-extra/gui-update.sh
-#	restart_if_necessary
-#fi
 }
 
 determine_g2s() {

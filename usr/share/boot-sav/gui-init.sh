@@ -29,6 +29,11 @@ LAB="$(eval_gettext $'Scanning systems')"
 echo "SET@_label0.set_text('''${LAB}. $(eval_gettext $'This may require several minutes...')''')"
 start_pulse
 ######## During first pulsate ########
+if [[ -d /usr/share/boot-sav-extra ]];then
+	. /usr/share/boot-sav-extra/gui-extra.sh		#Extra librairies
+else
+	. /usr/share/boot-sav/gui-dummy.sh				#Dummy librairies
+fi
 . /usr/share/boot-sav/${APPNAME}-translations.sh	#Tranlations specific to the app
 . /usr/share/boot-sav/bs-init.sh					#Librairies common to os-uninstaller, boot-repair, and clean-ubiquity
 . /usr/share/boot-sav/gui-raid-lvm.sh				#Init librairies common to os-uninstaller and boot-repair

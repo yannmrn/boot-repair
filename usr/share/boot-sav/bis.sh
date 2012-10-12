@@ -1,6 +1,6 @@
 #!/bin/bash
 VERSION='0.61.full + Boot-Repair extra info';
-RELEASE_DATE='Boot-Info September 18th 2012';
+RELEASE_DATE='Boot-Info October 11th 2012';
 LAST_GIT_COMMIT='';
 RETRIEVAL_DATE='';
 ################################################################################
@@ -2410,7 +2410,7 @@ Get_Partition_Info() {
 
 	if [ "${type}" = 'vfat' ] ; then
 	   # Check FAT filesystems for EFI boot files.
-	   for file in "${mountname}"/efi/*/*.efi ; do
+	   for file in "${mountname}"/efi/*/*.efi* ; do
 	     # Remove "${mountname}" part of the filename.
 	     file="${file#${mountname}}";
 

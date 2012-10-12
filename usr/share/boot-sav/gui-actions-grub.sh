@@ -187,7 +187,7 @@ if [[ ! "$NOW_IN_OTHER_DISKS" ]];then
 	|| [[ "$(cat "$CATTEE" | grep -i "t known to reserve space" )" ]] || [[ "$BLANKEXTRA_ACTION" ]];then
 		if [[ ! "$BLANKEXTRA_ACTION" ]];then #http://paste.ubuntu.com/1058971 , http://paste.ubuntu.com/1060937
 			#iso9660: http://askubuntu.com/questions/158299/why-does-installing-grub2-give-an-iso9660-filesystem-destruction-warning
-			[[ "$(cat "$CATTEE" | grep "t known to reserve space" )" ]] && FUNCTION=Extra-MBR-space-error || FUNCTION=FlexNet
+			[[ "$(cat "$CATTEE" | grep 't known to reserve space' )" ]] && FUNCTION=Extra-MBR-space-error || FUNCTION=FlexNet
 			update_translations
 			end_pulse
 			zenity --question --title="$APPNAME2" --text="${FUNCTION_detected} $Please_backup_data $Do_you_want_to_continue" || repflex=no
@@ -199,7 +199,7 @@ if [[ ! "$NOW_IN_OTHER_DISKS" ]];then
 			grubinstall
 		fi
 	fi
-	if [[ "$(cat "$CATTEE" | grep ": error: out of memory." )" ]] && [[ ! "$ATA" ]];then
+	if [[ "$(cat "$CATTEE" | grep ': error: out of memory.' )" ]] && [[ ! "$ATA" ]];then
 		FUNCTION=out-of-memory
 		OPTION="$Ata_disk"
 		update_translations
@@ -218,9 +218,9 @@ if [[ ! "$NOW_IN_OTHER_DISKS" ]];then
 			start_pulse
 		fi
 	fi
-	if [[ "$(cat "$CATTEE" | grep ": error: out of memory." )" ]] && [[ "$ATA" ]] \
-	&& [[ ! "$(cat "$CATTEE" | grep "Installation finished. No error reported." )" ]] \
-	|| [[ "$(cat "$CATTEE" | grep "will not proceed with blocklists" )" ]];then
+	if [[ "$(cat "$CATTEE" | grep ': error: out of memory.' )" ]] && [[ "$ATA" ]] \
+	&& [[ ! "$(cat "$CATTEE" | grep 'Installation finished. No error reported.' )" ]] \
+	|| [[ "$(cat "$CATTEE" | grep 'will not proceed with blocklists' )" ]];then
 		embeddingerror=yes
 		FUNCTION="Embedding-error-in-$GRUBSTAGEONE"
 		TYPE3=/boot
@@ -232,7 +232,11 @@ if [[ ! "$NOW_IN_OTHER_DISKS" ]];then
 		zenity --warning --title="$APPNAME2" --text="${FUNCTION_detected} $You_may_want_to_retry_after_activating_OPTION"
 		start_pulse
 	fi
-	if [[ "$(cat "$CATTEE" | grep "failed to run command" | grep grub | grep install )" ]];then
+	if [[ "$(cat "$CATTEE" | grep 'will not proceed with blocklists' )" ]];then
+		FORCEPARAM="--force " #http://www.linuxquestions.org/questions/linux-newbie-8/problem-installing-fedora-17-in-dual-booting-with-windows-7-a-4175412439/page2.html
+		grubinstall
+	fi
+	if [[ "$(cat "$CATTEE" | grep 'failed to run command' | grep grub | grep install )" ]];then
 		echo "Failed to run command grub-install detected."
 		${CHROOTCMD}type ${GRUBTYPE_OF_PART[$USRPART]}
 		for gg in /usr/sbin/ /usr/bin/ /sbin/ /bin/ /usr/sbin/lib*/*/*/ /usr/bin/lib*/*/*/ /sbin/lib*/*/*/ /bin/lib*/*/*/;do #not sure "type" is available in all distros
@@ -267,12 +271,22 @@ if [[ ! "$NOW_IN_OTHER_DISKS" ]];then
 					if [[ "$CREATE_BKP_ACTION" ]];then
 						for chgfile in Microsoft/Boot/bootmgfw.efi Microsoft/Boot/bootx64.efi Boot/bootx64.efi;do
 							for eftmp in efi EFI;do
-								if [[ -f "${EFIDO}${eftmp}/$chgfile" ]] && [[ ! -f "${EFIDO}${eftmp}/${chgfile}.bkp" ]];then
-									cp "${EFIDO}${eftmp}/$chgfile" "$LOGREP/${LISTOFPARTITIONS[$efitmp]}"
-									echo "Add .bkp to ${EFIDO}${eftmp}/$chgfile"
-									mv "${EFIDO}${eftmp}/$chgfile" "${EFIDO}${eftmp}/${chgfile}.bkp"
-									echo "cp $EFIGRUBFILE ${EFIDO}${eftmp}/$chgfile"
-									cp "$EFIGRUBFILE" "${EFIDO}${eftmp}/$chgfile"
+								EFIDOFI="${EFIDO}${eftmp}/"
+								EFIFICH="${EFIDOFI}$chgfile"
+								EFIFOLD="${EFIFICH%/*}"
+								if [[ -f "$EFIFICH" ]] && [[ ! -f "${EFIFICH}.bkp" ]] && [[ ! -f "${EFIFICH}.grb" ]];then
+									cp "$EFIFICH" "${LOGREP}/${LISTOFPARTITIONS[$efitmp]}"
+									echo "Add .bkp to $EFIFICH"
+									mv "$EFIFICH" "${EFIFICH}.bkp"
+									echo "cp $EFIGRUBFILE $EFIFICH"
+									cp "$EFIGRUBFILE" "$EFIFICH"
+								fi
+								#When no Windows EFI file
+								[[ ! -d "$EFIFOLD" ]] && echo "Created $EFIFOLD" && mkdir -p "$EFIFOLD"
+								if [[ ! -f "$EFIFICH" ]] && [[ ! -f "${EFIFICH}.bkp" ]];then
+									cp "$EFIGRUBFILE" "${EFIFICH}.grb"
+									[[ -f "${EFIFICH}.grb" ]] && echo "cp $EFIGRUBFILE $EFIFICH (& .grb)" \
+									&& cp "$EFIGRUBFILE" "$EFIFICH"
 								fi
 							done
 						done
@@ -343,12 +357,12 @@ fi
 
 grub_mkconfig_main() {
 grub_mkconfig
-if [[ "$(cat "$CATTEE" | grep "error:" )" ]];then #eg http://paste.ubuntu.com/1097173
+if [[ "$(cat "$CATTEE" | grep 'error:' )" ]];then #eg http://paste.ubuntu.com/1097173
 	ERROR=yes
 fi
 for z in grub grub2;do #Set Windows as default OS
 	if [[ -f "${BLKIDMNT_POINT[$REGRUB_PART]}"/boot/${z}/grub.cfg ]] && [[ "$CHANGEDEFAULTOS" ]];then
-		r="$(grep -i windows "${BLKIDMNT_POINT[$REGRUB_PART]}"/boot/${z}/grub.cfg )"
+		r="$(grep -i windows "${BLKIDMNT_POINT[$REGRUB_PART]}/boot/${z}/grub.cfg" )"
 		if [[ "$r" ]];then
 			if [[ "$(grep "Boot-Repair" <<< "$r" )" ]];then
 				r="$(grep "Boot-Repair" <<< "$r" )"
@@ -455,7 +469,7 @@ if [[ "$NOW_USING_CHOSEN_GRUB" ]];then
 		if [[ ! -d "${BLKIDMNT_POINT[$REGRUB_PART]}/boot" ]];then
 			mkdir -p "${BLKIDMNT_POINT[$REGRUB_PART]}/boot"
 			echo "Created ${LISTOFPARTITIONS[$REGRUB_PART]}/boot"
-		elif [[ "$(ls "${BLKIDMNT_POINT[$REGRUB_PART]}/boot" )" ]];then
+		elif [[ "$(ls "${BLKIDMNT_POINT[$REGRUB_PART]}/boot" )" ]] && [[ "$KERNEL_PURGE" ]];then
 			echo "Rename ${LISTOFPARTITIONS[$BOOTPART_TO_USE]}/boot to boot_bak"
 			mv "${BLKIDMNT_POINT[$REGRUB_PART]}/boot" "${BLKIDMNT_POINT[$REGRUB_PART]}/boot_bak"
 			mkdir -p "${BLKIDMNT_POINT[$REGRUB_PART]}/boot"

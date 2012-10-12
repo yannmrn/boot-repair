@@ -341,9 +341,10 @@ done
 ######################################### Mount / Unmount functions ###############################
 #Used by : repair, uninstaller, before, after
 mount_all_blkid_partitions_except_df() {
-local i j temp
+local i j temp MOUNTCODE
 echo "[debug]Mount all blkid partitions except the ones already mounted"
 MOUNTB="$(mount)"
+MOUNTERROR=""
 #start_kill_nautilus
 for ((i=1;i<=NBOFPARTITIONS;i++)); do
 	if [[ "$MOUNTB" =~ "/dev/${LISTOFPARTITIONS[$i]} on" ]];then
@@ -359,6 +360,15 @@ for ((i=1;i<=NBOFPARTITIONS;i++)); do
 		BLKIDMNT_POINT[$i]="/mnt/$PACK_NAME/${LISTOFPARTITIONS[$i]}"
 		mkdir -p "${BLKIDMNT_POINT[$i]}"
 		mount /dev/${LISTOFPARTITIONS[$i]} "${BLKIDMNT_POINT[$i]}"
+		MOUNTCODE="$?"
+		if [[ "$MOUNTCODE" = 14 ]];then #https://bugs.launchpad.net/ubuntu/+source/util-linux/+bug/1064928
+			#http://ubuntuforums.org/showthread.php?t=2067828
+			echo "mount -t ntfs-3g -o remove_hiberfile /dev/${LISTOFPARTITIONS[$i]} ${BLKIDMNT_POINT[$i]}"
+			mount -t ntfs-3g -o remove_hiberfile /dev/${LISTOFPARTITIONS[$i]} "${BLKIDMNT_POINT[$i]}"
+		elif [[ "$MOUNTCODE" != 0 ]];then
+			echo "mount /dev/${LISTOFPARTITIONS[$i]} -> Error code $MOUNTCODE"
+			MOUNTERROR="$MOUNTCODE" #http://ubuntuforums.org/showthread.php?t=2068280
+		fi
 	fi
 	echo "[debug]BLKID Mount point of ${LISTOFPARTITIONS[$i]} is: ${BLKIDMNT_POINT[$i]}"
 	for ((j=1;j<=TOTAL_QUANTITY_OF_OS;j++)); do #Correspondency with OS_PARTITION

@@ -71,11 +71,12 @@ for ((i=1;i<=NBOFPARTITIONS;i++)); do
 	EFIDO="${BLKIDMNT_POINT[$i]}/"
 	for chgfile in Microsoft/Boot/bootmgfw.efi Microsoft/Boot/bootx64.efi Boot/bootx64.efi;do
 		for eftmp in efi EFI;do
-			if [[ -f "${EFIDO}${eftmp}/${chgfile}.bkp" ]];then
-				[[ -f "${EFIDO}${eftmp}/$chgfile" ]] && echo "rm ${EFIDO}${eftmp}/$chgfile" \
-				&& rm "${EFIDO}${eftmp}/$chgfile"
-				echo "Remove .bkp from ${EFIDO}${eftmp}/${chgfile}.bkp"
-				mv "${EFIDO}${eftmp}/${chgfile}.bkp" "${EFIDO}${eftmp}/$chgfile"
+			EFIFICH="${EFIDO}${eftmp}/${chgfile}"
+			[[ -f "${EFIFICH}.grb" ]] && echo "rm $EFIFICH ${EFIFICH}.grb" && rm "$EFIFICH" "${EFIFICH}.grb"
+			if [[ -f "${EFIFICH}.bkp" ]];then
+				[[ -f "$EFIFICH" ]] && echo "rm $EFIFICH" && rm "$EFIFICH"
+				echo "Remove .bkp from ${EFIFICH}.bkp"
+				mv "${EFIFICH}.bkp" "$EFIFICH"
 			fi
 		done
 	done
@@ -283,19 +284,8 @@ multi(0)disk(0)rdisk(${tempdisk})partition(${tempnum})\WINDOWS=\"Windows\" /noex
 						break
 					fi
 				done
-				if [[ ! "$(ls ${BLKIDMNT_POINT[$i]}/ | grep -ix $file )" ]];then
-					PACKAGELIST=boot-sav-extra
-					FILETOTEST=extra
-					FUNCTION=XP
-					[[ ! -d /usr/share/boot-sav/extra ]] && installpackagelist
-					if [[ -d /usr/share/boot-sav/extra ]] && [[ "$(type -p tar)" ]];then
-						[[ "$file" =~ l ]] && tmp=2 || tmp=1
-						tar -Jxf /usr/share/$PACKAGELIST/bin$tmp -C "${BLKIDMNT_POINT[$i]}"
-						echo "Fixed ${BLKIDMNT_POINT[$i]}/$file"
-					else
-						ERROR=yes
-					fi
-				fi
+				[[ ! "$(ls ${BLKIDMNT_POINT[$i]}/ | grep -ix $file )" ]] && repair_boot_ini_nonfree
+				[[ ! "$(ls ${BLKIDMNT_POINT[$i]}/ | grep -ix $file )" ]] && ERROR=yes
 			fi
 		done
 	fi
@@ -541,6 +531,12 @@ $Boot_files_of_SYSTEM2_are_far \
 $You_may_want_to_retry_after_creating_TYP_part (FAT32, 100MB~250MB, ${start_of_the_disk}, ${FLAGTYP_flag}). $Via_TOOL1 \
 $Then_select_this_part_via_OPTION2_of_TOOL3"
 	fi
+fi
+if [[ "$ROOTDISKMISSING" ]];then
+	TEXTEND="${TEXTEND}
+
+$Broken_wubi_detected
+$Missingrootdiskurl"
 fi
 }
 

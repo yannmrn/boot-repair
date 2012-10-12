@@ -25,8 +25,7 @@ echo "SET@_label_wubi.set_text('''${Repair_Wubi}''')"
 echo 'SET@_checkbutton_wubi.show()'
 echo "SET@_label_pastebin.set_text('''${Create_a_BootInfo_report} (${to_get_help_by_email_or_forum})''')"
 echo 'SET@_vbox_pastebin.show()'
-echo "SET@_label_bisgit.set_text('''GIT (beta)''')"
-echo "SET@_label_appname.set_markup('''<b><big>Boot-Repair</big></b>''')" # ${APPNAME_VERSION%~*}
+echo "SET@_label_appname.set_markup('''<b><big>Boot-Repair</big></b>''')" #${APPNAME_VERSION%~*}
 echo "SET@_label_appdescription.set_text('''${Repair_the_boot_of_the_computer}''')"
 echo 'SET@_logobr.show()'
 echo "SET@_linkbutton_websitebr.show()"
@@ -36,7 +35,11 @@ set_easy_repair
 }
 
 set_easy_repair_diff() {
-FSCK_ACTION=""; echo 'SET@_checkbutton_repairfilesystems.set_active(False)'
+if [[ "$ROOTDISKMISSING" ]] || [[ "$MOUNTERROR" ]];then
+	FSCK_ACTION=repair-filesystems; echo 'SET@_checkbutton_repairfilesystems.set_active(True)'
+else
+	FSCK_ACTION=""; echo 'SET@_checkbutton_repairfilesystems.set_active(False)'
+fi
 if [[ "$QTY_WUBI" != 0 ]];then
 	WUBI_ACTION=repair-wubi; echo 'SET@_checkbutton_wubi.set_active(True)'
 	echo 'SET@_checkbutton_wubi.set_sensitive(True)'
@@ -77,7 +80,8 @@ mainapplypulsate
 
 _checkbutton_repairfilesystems() {
 if [[ "${@}" = True ]]; then
-	FSCK_ACTION=repair-filesystems; zenity --info --title="$(eval_gettext "$CLEANNAME")" --text="${Please_backup_data}"
+	FSCK_ACTION=repair-filesystems
+	[[ ! "$ROOTDISKMISSING" ]] && zenity --info --title="$(eval_gettext "$CLEANNAME")" --text="${Please_backup_data}"
 else
 	FSCK_ACTION=""
 fi

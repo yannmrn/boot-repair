@@ -96,6 +96,8 @@ done
 check_wubi_existence() {
 local i
 TOTAL_QTY_OF_OS_INCLUDING_WUBI="$TOTAL_QUANTITY_OF_OS"; QTY_WUBI=0
+WUBILDR=""
+ROOTDISKMISSING=""
 for ((i=1;i<=NBOFPARTITIONS;i++)); do
 	if [[ -f "${BLKIDMNT_POINT[$i]}/ubuntu/disks/root.disk" ]] ;then
 		echo "There is Wubi inside ${LISTOFPARTITIONS[$i]}"
@@ -108,7 +110,10 @@ for ((i=1;i<=NBOFPARTITIONS;i++)); do
 		MOUNTPOINTWUBI[$QTY_WUBI]="/mnt/$PACK_NAME/wubi$QTY_WUBI"
 		mkdir -p "${MOUNTPOINTWUBI[$QTY_WUBI]}"
 	fi
+	[[ -f "${BLKIDMNT_POINT[$i]}/wubildr" ]] && WUBILDR=yes
 done
+[[ "$QUANTITY_OF_REAL_WINDOWS" != 0 ]] && [[ "$QTY_WUBI" = 0 ]] && [[ "$WUBILDR" ]] && ROOTDISKMISSING=yes
+#http://ubuntu-with-wubi.blogspot.ca/2011/08/missing-rootdisk.html
 }
 
 ############################ CHECK PART TYPES ##########################
