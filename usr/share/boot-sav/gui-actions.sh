@@ -218,8 +218,8 @@ local PARTTOBEFLAGGED=$1 temp PRIMARYNUM DISKTOFLAG r
 temp=${LISTOFPARTITIONS[$PARTTOBEFLAGGED]}	#sdXY
 PRIMARYNUM="${temp##*[a-z]}"				#Y (1~4) of sdXY
 DISKTOFLAG="${DISK_PART[$PARTTOBEFLAGGED]}" #sdX
-echo "parted /dev/$DISKTOFLAG set $PRIMARYNUM boot on"
-parted /dev/$DISKTOFLAG set $PRIMARYNUM boot on
+echo "parted --script /dev/$DISKTOFLAG set $PRIMARYNUM boot on"
+parted --script /dev/$DISKTOFLAG set $PRIMARYNUM boot on
 FDISKL="$(LANGUAGE=C LC_ALL=C sudo fdisk -l)"
 for r in 1 2 3 4;do #http://paste.ubuntu.com/1111263
 	if [[ "$(echo "$FDISKL" | grep '*' | grep "dev/${DISKTOFLAG}$r" )" ]] && [[ "$r" != "$PRIMARYNUM" ]];then

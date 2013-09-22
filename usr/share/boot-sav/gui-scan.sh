@@ -49,11 +49,11 @@ for ((d=1;d<=NBOFDISKS;d++)); do
 done
 echo "
 
-$DASH parted -l:
+$DASH parted --script -l:
 
 $PARTEDL
 
-$DASH parted -lm:
+$DASH parted --script -lm:
 
 $PARTEDLM
 "

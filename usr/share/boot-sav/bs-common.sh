@@ -20,8 +20,8 @@ echo "[debug]Delete the content of TMP_FOLDER_TO_BE_CLEARED and put os-prober in
 OSPROBER=$(os-prober)
 blkid -g			#Update the UUID cache
 BLKID=$(blkid)
-PARTEDL="$(LANGUAGE=C LC_ALL=C parted -l)"
-PARTEDLM="$(LANGUAGE=C LC_ALL=C parted -lm)" #ex with null -l but -lm ok http://paste.ubuntu.com/1206434
+PARTEDL="$(LANGUAGE=C LC_ALL=C parted --script -l)"
+PARTEDLM="$(LANGUAGE=C LC_ALL=C parted --script -lm)" #ex with null -l but -lm ok http://paste.ubuntu.com/1206434
 }
 
 ######################################### check_blkid_partitions ###############################
