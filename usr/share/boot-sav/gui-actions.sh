@@ -58,7 +58,7 @@ if [[ -f "$LOGREP/$2/$1" ]];then	#Security
 	echo "Restore the Clean-Ubiquity MBR backup $1 into the MBR of disk $2"
 	mv "$LOGREP/$2/current_mbr.img" "$LOGREP/$2/mbr_before_restoration.img"
 	dd if="$LOGREP/$2/$1" of=/dev/$2 bs=446 count=1 #Stops before the partition table
-else 
+else
 	echo "Error : $LOGREP/$2/$1 does not exist"
 	zenity --error --text="Error : MBR backup $LOGREP/$2/$1 does not exist. MBR could not be restored."
 fi
@@ -280,7 +280,7 @@ multi(0)disk(0)rdisk(${tempdisk})partition(${tempnum})\WINDOWS=\"Windows\" /noex
 					if [[ "$(ls ${BLKIDMNT_POINT[$j]}/ | grep -ix $file )" ]];then
 						filetocopy="$(ls ${BLKIDMNT_POINT[$j]} | grep -ix $file )"
 						cp "${BLKIDMNT_POINT[$j]}/$filetocopy" "${BLKIDMNT_POINT[$i]}/$filetocopy"
-						echo "Copied $filetocopy from ${LISTOFPARTITIONS[$j]} to ${LISTOFPARTITIONS[$i]}"			
+						echo "Copied $filetocopy from ${LISTOFPARTITIONS[$j]} to ${LISTOFPARTITIONS[$i]}"
 						break
 					fi
 				done
@@ -388,7 +388,7 @@ if [[ ! -f "$LOGREP/${GRUBSTAGEONE}/before_wiping.img" ]];then #works: http://pa
 	if [[ ! -f "$LOGREP/${GRUBSTAGEONE}/before_wiping.img" ]];then
 		echo "Could not backup, wipe cancelled."
 		ERROR=yes
-	else	
+	else
 		echo "WIPE $GRUBSTAGEONE : ${SECTORS_TO_WIPE} sectors * ${BYTES_PER_SECTOR} bytes"
 		if [[ "$SECTORS_TO_WIPE" -gt 0 ]] && [[ "$SECTORS_TO_WIPE" -le 2048 ]] && [[ "$BYTES_PER_SECTOR" -ge 512 ]] \
 		&& [[ "$BYTES_PER_SECTOR" -le 1024 ]];then

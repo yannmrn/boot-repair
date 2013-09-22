@@ -212,7 +212,7 @@ $DASH ${temp#*boot-sav/} :"
 	for gg in /usr/sbin/ /usr/bin/ /sbin/ /bin/;do
 		[[ -f "${BLKIDMNT_POINT[$i]}${gg}grub-setup" ]] && GRUBSETUP_OF_PART[$i]=grub-setup
 	done
-	
+
 	GRUBOK_OF_PART[$i]=""
 	if [[ "${GRUBVER[$i]}" = grub1 ]] || [[ "${UPDATEGRUB_OF_PART[$i]}" != no-update-grub ]] \
 	&& [[ "${GRUBTYPE_OF_PART[$i]}" != nogrubinstall ]];then
@@ -220,7 +220,7 @@ $DASH ${temp#*boot-sav/} :"
 		(( QTY_OF_PART_WITH_GRUB += 1 ))
 		LIST_OF_PART_WITH_GRUB[$QTY_OF_PART_WITH_GRUB]="$i"
 	fi
-	
+
 	if [[ -f "${BLKIDMNT_POINT[$i]}/usr/bin/apt-get" ]] || [[ -f "${BLKIDMNT_POINT[$i]}/usr/bin/yum" ]] \
 	|| [[ -f "${BLKIDMNT_POINT[$i]}/usr/bin/zypper" ]] || [[ -f "${BLKIDMNT_POINT[$i]}/usr/bin/pacman" ]] \
 	|| [[ -f "${BLKIDMNT_POINT[$i]}/bin/apt-get" ]] || [[ -f "${BLKIDMNT_POINT[$i]}/bin/yum" ]] \
@@ -330,7 +330,7 @@ $(ls "${BLKIDMNT_POINT[$i]}/boot")
 	else
 		SEPARATE_USR_PART[$i]=not-sep-usr
 	fi
-	
+
 
 	if [[ -f "${BLKIDMNT_POINT[$i]}/etc/fstab" ]];then
 		if [[ "$(cat "${BLKIDMNT_POINT[$i]}/etc/fstab" | grep /boot/efi | grep -v '#' )" ]];then
@@ -434,7 +434,7 @@ $(ls "${BLKIDMNT_POINT[$i]}/boot")
 		BOOT_IN_FSTAB_OF_PART[$i]=part-has-no-fstab
 		USR_IN_FSTAB_OF_PART[$i]=part-has-no-fstab
 	fi
-	
+
 	PART_WITH_SEPARATEBOOT[$i]=not-sepboot
 	if [[ "${PART_WITH_OS[$i]}" != no-os ]];then
 		PART_WITH_SEPARATEBOOT[$i]=not-sepboot
@@ -489,7 +489,7 @@ $temp
 		(( QTY_WINBOOTTOREPAIR += 1 ))
 		WINSETOREPAIR[$i]=yes
 	fi
-	
+
 	#TODO use parted when GPT http://paste.ubuntu.com/1178478
 	FARBIOS[$i]=not-far
 	temp="$(echo "$FDISKL" | grep "${LISTOFPARTITIONS[$i]} " )"
@@ -526,7 +526,7 @@ $temp
 			fi
 		done < <(echo "$PARTEDLM")
 	fi
-	
+
 	if [[ -f "${BLKIDMNT_POINT[$i]}/etc/mdadm/mdadm.conf" ]];then
 		echo "
 $DASH ${LISTOFPARTITIONS[$i]}/etc/mdadm/mdadm.conf :
@@ -547,7 +547,7 @@ $(cat "${BLKIDMNT_POINT[$i]}"/proc/mdstat)
 	if [[ -d "${BLKIDMNT_POINT[$i]}/casper" ]] || [[ -d "${BLKIDMNT_POINT[$i]}/preseed" ]] \
 	|| [[ -f "${BLKIDMNT_POINT[$i]}/autorun.inf" ]] && [[ "${USBDISK[${DISKNB_PART[$i]}]}" = usb-disk ]];then
 		ddd="${DISKNB_PART[$i]}" #eg http://ubuntuforums.org/showpost.php?p=12264795&postcount=574
-		USBDISK[$ddd]=liveusb		
+		USBDISK[$ddd]=liveusb
 	fi
 
 	WINEFI[$i]=""
@@ -660,7 +660,7 @@ for ((d=1;d<=NBOFDISKS;d++)); do
 	else
 		ReadEFIdos
 	fi
-	
+
 done
 }
 

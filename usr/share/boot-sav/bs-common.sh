@@ -56,7 +56,7 @@ local lvline line temp part disk raidset temp2
 
 #Add standard partitions
 while read line; do
-	temp=${line%%:*} 
+	temp=${line%%:*}
 	part=${temp#*dev/} 	#e.g. "sda12" or "mapper/isw_decghhaeb_Volume0p2" or "/mapper/isw_bcbggbcebj_ARRAY4" or "/dev/mapper/vg_adamant-lv_root"
 	disk=""
 	echo "[debug]part : $part"	#Add "squashfs" ?   #sr1 : http://paste.ubuntu.com/996225
@@ -327,11 +327,11 @@ for ((i=1;i<=NBOFDISKS;i++)); do
 	a=$(cat "${TMP_FOLDER_TO_BE_CLEARED}/sort" | sort -g -r | tail -1 )  #sort the file in the increasing order
 	[[ "$(grep "^[0-9]\+$" <<< $a )" ]] && SECTORS_BEFORE_PART[$i]="$a" || SECTORS_BEFORE_PART[$i]="1" # Save minimum 1 sector (the MBR)
 	rm -f ${TMP_FOLDER_TO_BE_CLEARED}/sort
-	# a=$(LANGUAGE=C LC_ALL=C fdisk -l /dev/$disk | grep "sectors of"); b=${a##*= }; c=${b% *}; 
+	# a=$(LANGUAGE=C LC_ALL=C fdisk -l /dev/$disk | grep "sectors of"); b=${a##*= }; c=${b% *};
 	# echo "$c" > ${TMP_FOLDER_TO_BE_CLEARED}/sort   #Other way to calculate
 	echo "$(stat -c %B /dev/${LISTOFDISKS[$i]})" > ${TMP_FOLDER_TO_BE_CLEARED}/sort
 	echo 512 >> ${TMP_FOLDER_TO_BE_CLEARED}/sort # Save minimum 512 bytes/sector (in case there is a problem with stat)
-	BYTES_PER_SECTOR[$i]=$(cat "${TMP_FOLDER_TO_BE_CLEARED}/sort" | sort -g | tail -1 ) 
+	BYTES_PER_SECTOR[$i]=$(cat "${TMP_FOLDER_TO_BE_CLEARED}/sort" | sort -g | tail -1 )
 	rm -f ${TMP_FOLDER_TO_BE_CLEARED}/sort
 	BYTES_BEFORE_PART[$i]=$((${SECTORS_BEFORE_PART[$i]}*${BYTES_PER_SECTOR[$i]}))
 	echo "[debug] BYTES_BEFORE_PART[$i] (${LISTOFDISKS[$i]}) = ${SECTORS_BEFORE_PART[$i]} sectors * ${BYTES_PER_SECTOR[$i]} bytes = ${BYTES_BEFORE_PART[$i]} bytes."
@@ -417,7 +417,7 @@ $DASH fdisk -l:
 $(fdisk -l)
 
 "
-for ((i=1;i<=TOTAL_QUANTITY_OF_OS;i++)); do  
+for ((i=1;i<=TOTAL_QUANTITY_OF_OS;i++)); do
 	if [[ "${OS_PARTITION[$i]}" != "$OS_TO_DELETE_PARTITION" ]] \
 	&& [[ "${LOG_PATH[$i]}/$DATE$APPNAME$SECOND" != "$LOGREP" ]] \
 	&& [[ ! "${RECOVORHID[$i]}" ]] && [[ ! "${SEPWINBOOTOS[$i]}" ]] && [[ ! "${READONLY[$i]}" ]]; then
@@ -492,7 +492,7 @@ if [[ "$OSPROBER" ]];then
 
 	##CHECK THE TYPE OF EACH OS
 	for ((i=1;i<=TOTAL_QUANTITY_OF_OS;i++)); do
-		if [[ "$(grep -i linux <<< ${OS_COMPLETE_NAME[$i]} )" ]]; then 
+		if [[ "$(grep -i linux <<< ${OS_COMPLETE_NAME[$i]} )" ]]; then
 			(( QUANTITY_OF_DETECTED_LINUX += 1 ))
 			TYPE[$i]=linux
 		elif [[ "$(grep -i windows <<< ${OS_COMPLETE_NAME[$i]} )" ]];then
@@ -557,7 +557,7 @@ for ((m=1;m<=QUANTITY_OF_DISKS;m++)); do
 		if [[ "${OS_DISK[$i]}" = "${DISK[$m]}" ]];then
 			(( QTY_OF_OS_ON_DISK[$m] += 1 ))
 			OS_PARTITION_ON_DISK[${QTY_OF_OS_ON_DISK[$m]}]="${OS_PARTITION[$i]}"
-			TYPE_ON_DISK[${QTY_OF_OS_ON_DISK[$m]}]="${TYPE[$i]}" 
+			TYPE_ON_DISK[${QTY_OF_OS_ON_DISK[$m]}]="${TYPE[$i]}"
 			LOG_PATH_ON_DISK[${QTY_OF_OS_ON_DISK[$m]}]="${LOG_PATH[$i]}"
 			NEWMBR_PATH_ON_DISK[${QTY_OF_OS_ON_DISK[$m]}]="${MBR_PATH[$i]}"
 			OLDMBR_PATH_ON_DISK[${QTY_OF_OS_ON_DISK[$m]}]=$(sed "s/${PACK_NAME}/clean/g" <<< "${MBR_PATH[$i]}")
@@ -604,7 +604,7 @@ for i in $(dir "${MBR_PATH_ON_DISK[$k]}" ); do
 	# First backup system
 	if [[ "$i" =~ mbr- ]] && [[ ! -f "$LOGREP/${DISK[$m]}/$i" ]];then
 		check_if_tmp_mbr_is_grub_type "${MBR_PATH_ON_DISK[$k]}/$i"
-		if [[ "$MBRCONTAINSGRUB" = false ]]; then 
+		if [[ "$MBRCONTAINSGRUB" = false ]]; then
 			mkdir -p "$LOGREP/${DISK[$m]}"
 			cp "${MBR_PATH_ON_DISK[$k]}/$i" "$LOGREP/${DISK[$m]}"
 			echo "** ${MBR_PATH_ON_DISK[$k]}/$i has been saved into $LOGREP/${DISK[$m]}"
