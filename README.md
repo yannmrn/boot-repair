@@ -8,3 +8,5 @@ Boot-Repair lets you fix these issues with a simple click, which (generally rein
 Boot-Repair also has advanced options to back up table partitions, back up bootsectors, create a Boot-Info (to get help by email or forum), or change the default repair parameters: configure GRUB, add kernel options (acpi=off ...), purge GRUB, change the default OS, restore a Windows-compatible MBR, repair a broken filesystem, specify the disk where GRUB should be installed, etc.
 
 Boot-Repair is a free software, licensed under GNU-GPL. Boot-Repair should be soon included in Ubuntu official repositories, until then use it at your own risk. 
+
+![](http://pix.toile-libre.org/upload/original/1335260967.png)
