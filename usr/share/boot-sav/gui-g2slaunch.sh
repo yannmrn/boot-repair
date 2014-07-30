@@ -45,10 +45,12 @@ if [[ $EUID -ne 0 ]];then
 		gksu $APPNAME  #TODO PolicyKit http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=492493
 	elif hash sudo && [ "$(grep -E '(boot=casper)|(boot=live)' /proc/cmdline)" ];then
 		sudo $APPNAME
+	elif hash beesu;then
+		beesu $APPNAME
 	elif hash su;then
 		su -c $APPNAME
 	else
-		echo "Please install gksu or su"
+		echo "Please install gksu, beesu or su"
 	fi
 	exit
 fi
