@@ -39,6 +39,8 @@ cd /usr/share/$PACK_NAME
 
 # Ask root privileges
 if [[ $EUID -ne 0 ]];then
+	if hash pkexec;then
+		pkexec $APPNAME
 	if hash gksudo;then
 		gksudo $APPNAME  #gksu and su dont work in Kubuntu
 	elif hash gksu;then
